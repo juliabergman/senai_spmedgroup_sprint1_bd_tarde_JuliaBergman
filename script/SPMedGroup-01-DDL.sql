@@ -1,0 +1,74 @@
+CREATE DATABASE SPMedGroup;
+
+USE SPMedGroup;
+
+CREATE TABLE Clinica (
+	IdClinica	INT PRIMARY KEY IDENTITY,
+	NomeClinica	VARCHAR(255) NOT NULL,
+	Endereco	VARCHAR(255) NOT NULL,
+	CEP			CHAR(8) NOT NULL
+	);
+
+CREATE TABLE TipoUsuario (
+	IdTipoUsuario		INT PRIMARY KEY IDENTITY,
+	TituloTipoUsuario	VARCHAR(255) NOT NULL UNIQUE
+	);
+
+CREATE TABLE Especialidade (
+	IdEspecialidade		INT PRIMARY KEY IDENTITY,
+	TipoEspecialidade	VARCHAR(255) NOT NULL
+	);
+
+CREATE TABLE Situacao (
+	IdSituacao		INT PRIMARY KEY IDENTITY,
+	TipoSituacao	VARCHAR(255) NOT NULL UNIQUE
+	);
+
+CREATE TABLE Administrador (
+	IdADM	INT PRIMARY KEY IDENTITY,
+	Email	VARCHAR (255) NOT NULL UNIQUE,
+	Senha	VARCHAR (255) NOT NULL,
+	IdTipoUsuario	INT FOREIGN KEY REFERENCES TipoUsuario (IdTipoUsuario)
+	);
+
+CREATE TABLE Endereco (
+	IdEndereco	INT PRIMARY KEY IDENTITY,
+	Rua			VARCHAR (255),
+	Numero		BIGINT,
+	Estado		VARCHAR (255),
+	CEP			CHAR(8),
+	IdPaciente	INT FOREIGN KEY REFERENCES Endereco (IdEndereco)
+	);
+
+CREATE TABLE Paciente (
+	IdPaciente		INT PRIMARY KEY IDENTITY,
+	NomePaciente	VARCHAR (255) NOT NULL,
+	CPF				CHAR (11) NOT NULL UNIQUE,
+	RG				CHAR (9) NOT NULL UNIQUE,
+	Data_Nascimento	DATETIME2 NOT NULL,
+	Telefone		CHAR (9) NOT NULL,
+	Email			VARCHAR (255) NOT NULL UNIQUE,
+	Senha			VARCHAR (255) NOT NULL,
+	IdTipoUsuario	INT FOREIGN KEY REFERENCES TipoUsuario (IdTipoUsuario)
+	);
+
+CREATE TABLE Medico (
+	IdMedico		INT PRIMARY KEY IDENTITY,
+	NomeMedico		VARCHAR (255) NOT NULL,
+	Email			VARCHAR (255) NOT NULL UNIQUE,
+	Senha			VARCHAR (255) NOT NULL,
+	CRM				CHAR (6) NOT NULL UNIQUE,
+	CNPJ			CHAR (14) NOT NULL UNIQUE,
+	IdEspecialidade INT FOREIGN KEY REFERENCES Especialidade (IdEspecialidade),
+	IdClinica		INT FOREIGN KEY REFERENCES Clinica (IdClinica),
+	IdTipoUsuario	INT FOREIGN KEY REFERENCES TipoUsuario (IdTipoUsuario)
+	);
+
+CREATE TABLE Consulta (
+	IdConsulta	INT PRIMARY KEY IDENTITY,
+	DataHora	DATETIME2 NOT NULL,
+	IdClinica	INT FOREIGN KEY REFERENCES Clinica(IdClinica),
+	IdMedico	INT FOREIGN KEY REFERENCES Medico(IdMedico),
+	IdPaciente	INT FOREIGN KEY REFERENCES Paciente(IdPaciente),
+	IdSituacao	INT FOREIGN KEY REFERENCES Situacao(IdSituacao)
+	);
